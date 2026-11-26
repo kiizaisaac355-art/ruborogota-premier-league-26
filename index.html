@@ -72,7 +72,6 @@ function fmtTime(s){ s=Math.max(0,s||0); var m=Math.floor(s/60),ss=s%60; if(m>=9
 function goPage(p,btn){ ['home','table','fixtures','players','teams','transfers','live'].forEach(function(x){ var el=document.getElementById('tab-'+x); if(el) el.style.display='none'; }); document.getElementById('tab-'+p).style.display='block'; document.querySelectorAll('.navBtn').forEach(function(b){b.classList.remove('active')}); if(btn) btn.classList.add('active'); if(p==='home') renderHome(); if(p==='table') renderTable(); if(p==='fixtures') renderFixtures(); if(p==='players') renderPlayers(); if(p==='teams') renderTeams(); if(p==='transfers') renderTransfers(); if(p==='live') renderLive(); }
 function checkAdmin(){ document.getElementById('modeBadge').innerHTML=isAdmin?'<span class="badge adminBadge">🔓 ADMIN MODE</span>':'<span class="badge fanBadge">👀 FAN MODE</span>'; var b=document.getElementById('adminBtn'); if(b) b.innerHTML=isAdmin?'LOGOUT ADMIN':'ADMIN LOGIN'; var ah=document.getElementById('adminHome'); if(ah) ah.innerHTML=isAdmin?' <span style="color:green">✅ You are Admin</span>':''; var rb=document.getElementById('resetAllBox'); if(rb) rb.style.display=isAdmin?'block':'none';}
 function toggleAdmin(){ if(isAdmin){ firebase.auth().signOut(); return; } var email=prompt('Admin Email:'); var pass=prompt('Admin Password:'); if(!email||!pass) return; firebase.auth().signInWithEmailAndPassword(email,pass).then(function(u){ if(u.user.email!==ADMIN_EMAIL){ alert('Not an admin account'); firebase.auth().signOut(); } }).catch(function(e){ alert('Login failed: '+e.message); }); }
-firebase.auth().onAuthStateChanged(function(user){ isAdmin=!!(user && user.email===ADMIN_EMAIL); checkAdmin(); renderAll(); });
 function getPts(p){ return (p.goals||0)*5 + (p.assists||0)*3 - (p.yellow||0)*1 - (p.red||0)*3; }
 function getLogo(t){ var w=t.trim().split(' '); var s=''; w.forEach(function(x){ if(x) s+=x[0]}); return s.slice(0,2).toUpperCase(); }
 function teamOptions(){ return d.teams.map(function(t){return '<option>'+t+'</option>'}).join(''); }
@@ -152,6 +151,8 @@ setInterval(()=>{ const b=document.getElementById('statAdminBox'); if(b) b.style
   appId: "1:271003362328:web:0b454eb5e74c7f4e67cf6d"
 };
 firebase.initializeApp(firebaseConfig);
+var db = firebase.firestore();
+firebase.auth().onAuthStateChanged(function(user){ isAdmin=!!(user && user.email===ADMIN_EMAIL); checkAdmin(); renderAll(); });
 const db = firebase.firestore();
 const docRef = db.collection("league").doc("main");
 const _oldSave = save;
