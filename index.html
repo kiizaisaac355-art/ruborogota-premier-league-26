@@ -153,7 +153,6 @@ setInterval(()=>{ const b=document.getElementById('statAdminBox'); if(b) b.style
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
 firebase.auth().onAuthStateChanged(function(user){ isAdmin=!!(user && user.email===ADMIN_EMAIL); checkAdmin(); renderAll(); });
-const db = firebase.firestore();
 const docRef = db.collection("league").doc("main");
 const _oldSave = save;
 function save(quiet){
