@@ -26,7 +26,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}th,td{padding:8px;borde
 </style>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-firestore-compat.js"></script>
-</head>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script></head>
 <body data-admin="false"><div class="wrap">
 <div class="head"><img src="logo.jpg" onerror="this.style.display='none'"><div><div id="modeBadge"></div><h1 style="margin:0">RUBOROGOTA PREMIER LEAGUE</h1><h2 style="margin:0">2026/2027</h2></div></div>
 <div class="nav">
@@ -63,7 +63,7 @@ var TEAMS=["Abesigamukama FC","Ruborogota United","Kashija FC","Kigwera Stars","
 var d=null; try{d=JSON.parse(localStorage.getItem('rpl_final'))}catch(e){d=null}
 if(!d){ d={teams:TEAMS.slice(),coaches:{},players:[],fixtures:[],transfers:[],commentary:{}}; }
 if(!d.teams) d.teams=TEAMS.slice(); if(!d.coaches) d.coaches={}; if(!d.players) d.players=[]; if(!d.fixtures) d.fixtures=[]; if(!d.transfers) d.transfers=[]; if(!d.commentary) d.commentary={};
-var ADMIN_PASS="RPL2026"; var isAdmin=localStorage.getItem('rpl_admin')==='yes';
+var ADMIN_EMAIL="admin@ruborogota.com"; var isAdmin=false;
 var liveTimer=null,liveSec=0,liveAdded=0,liveFixtureId=null;
 function requireAdmin(){ if(!isAdmin){ alert('Admin only. Please login as Admin.'); return false; } return true; }
 var _isTyping = false;
@@ -71,7 +71,8 @@ var _isTyping = false;
 function fmtTime(s){ s=Math.max(0,s||0); var m=Math.floor(s/60),ss=s%60; if(m>=90&&liveAdded>0) return '90+'+(m-90)+':'+(ss<10?'0'+ss:ss); return (m<10?'0'+m:m)+':'+(ss<10?'0'+ss:ss); }
 function goPage(p,btn){ ['home','table','fixtures','players','teams','transfers','live'].forEach(function(x){ var el=document.getElementById('tab-'+x); if(el) el.style.display='none'; }); document.getElementById('tab-'+p).style.display='block'; document.querySelectorAll('.navBtn').forEach(function(b){b.classList.remove('active')}); if(btn) btn.classList.add('active'); if(p==='home') renderHome(); if(p==='table') renderTable(); if(p==='fixtures') renderFixtures(); if(p==='players') renderPlayers(); if(p==='teams') renderTeams(); if(p==='transfers') renderTransfers(); if(p==='live') renderLive(); }
 function checkAdmin(){ document.getElementById('modeBadge').innerHTML=isAdmin?'<span class="badge adminBadge">🔓 ADMIN MODE</span>':'<span class="badge fanBadge">👀 FAN MODE</span>'; var b=document.getElementById('adminBtn'); if(b) b.innerHTML=isAdmin?'LOGOUT ADMIN':'ADMIN LOGIN'; var ah=document.getElementById('adminHome'); if(ah) ah.innerHTML=isAdmin?' <span style="color:green">✅ You are Admin</span>':''; var rb=document.getElementById('resetAllBox'); if(rb) rb.style.display=isAdmin?'block':'none';}
-function toggleAdmin(){ if(isAdmin){ isAdmin=false; localStorage.removeItem('rpl_admin'); checkAdmin(); renderAll(); return; } var p=prompt('Enter Admin Password:'); if(p===ADMIN_PASS){ isAdmin=true; localStorage.setItem('rpl_admin','yes'); alert('Welcome Admin!'); checkAdmin(); renderAll(); } else if(p!==null) alert('Wrong password'); }
+function toggleAdmin(){ if(isAdmin){ firebase.auth().signOut(); return; } var email=prompt('Admin Email:'); var pass=prompt('Admin Password:'); if(!email||!pass) return; firebase.auth().signInWithEmailAndPassword(email,pass).then(function(u){ if(u.user.email!==ADMIN_EMAIL){ alert('Not an admin account'); firebase.auth().signOut(); } }).catch(function(e){ alert('Login failed: '+e.message); }); }
+firebase.auth().onAuthStateChanged(function(user){ isAdmin=!!(user && user.email===ADMIN_EMAIL); checkAdmin(); renderAll(); });
 function getPts(p){ return (p.goals||0)*5 + (p.assists||0)*3 - (p.yellow||0)*1 - (p.red||0)*3; }
 function getLogo(t){ var w=t.trim().split(' '); var s=''; w.forEach(function(x){ if(x) s+=x[0]}); return s.slice(0,2).toUpperCase(); }
 function teamOptions(){ return d.teams.map(function(t){return '<option>'+t+'</option>'}).join(''); }
