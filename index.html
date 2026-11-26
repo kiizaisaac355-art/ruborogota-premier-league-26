@@ -195,8 +195,8 @@ docRef.onSnapshot(function(doc){
   var _old = JSON.stringify(d);
   var _newCheck = JSON.parse(JSON.stringify(newD));
   var _oldCheck = JSON.parse(JSON.stringify(d));
-  _newCheck.fixtures.forEach(function(f){ f.matchSeconds=0; f.baseSeconds=0; f.startedAt=0; });
-  _oldCheck.fixtures.forEach(function(f){ f.matchSeconds=0; f.baseSeconds=0; f.startedAt=0; });
+  _newCheck.fixtures.forEach(function(f){ f.matchSeconds=0; f.baseSeconds=0; f.startedAt=0; f.addedTime=0; });
+  _oldCheck.fixtures.forEach(function(f){ f.matchSeconds=0; f.baseSeconds=0; f.startedAt=0; f.addedTime=0; });
   var _onlyClock = JSON.stringify(_newCheck) === JSON.stringify(_oldCheck);
   d = newD;
   var _lf=d.fixtures.find(function(x){return x.status==='LIVE'}); if(_lf && _lf.addedTime!=null) liveAdded=_lf.addedTime;
