@@ -143,12 +143,12 @@ f.stats.possH=50; f.stats.possA=50; f.stats.shotsH=0; f.stats.shotsA=0; f.stats.
 setInterval(()=>{ const b=document.getElementById('statAdminBox'); if(b) b.style.display = (typeof isAdmin!=='undefined' && isAdmin && d.fixtures.some(function(x){return x.status==='LIVE'})) ? 'block':'none'; }, 500);
   // --- FIREBASE LIVE ---
   const firebaseConfig = {
-  apiKey: "AIzaSyDsD4AiSqALdDPns8D7-2FIstoU_MK5io",
+  apiKey: "AIzaSyDsD4mAi5qAldDPns8D7-2FIstoU_MK51o",
   authDomain: "ruborogota-premier-league.firebaseapp.com",
   projectId: "ruborogota-premier-league",
   storageBucket: "ruborogota-premier-league.firebasestorage.app",
   messagingSenderId: "271003362328",
-  appId: "1:271003362328:web:0b454eb5e74c7f4e67cf6d"
+  appId: "1:271003362328:web:00454eb5e74c7f4e67cf6d"
 };
 firebase.initializeApp(firebaseConfig);
 var db = firebase.firestore();
